@@ -8,14 +8,16 @@ $fn=20;
 // $fs=12;
 // $fn=6;
 
-surface_thickness=5;
+surface_thickness=8;
 sc=100; // simplex_scale
 no_surface_bars = 200;
 frame_multiplier = 1.6;
 
 // simplex_segre();
 // cube_segre();
-simplex_segre_flat();
+// simplex_segre_flat();
+// segre_pure();
+segre_framed();
 
 // A bar with rounded corners
 module bar (p1, p2, r1) { // Two end points and radius
@@ -59,6 +61,14 @@ module simplex_segre () {
     segre_surface();
 }
 
+module frame_segre() {
+    bar ([0,0,0], [sc,sc,0], frame_multiplier*surface_thickness);
+    bar ([0,0,0], [sc,0,sc], frame_multiplier*surface_thickness);
+    bar ([0,sc,sc], [sc,0,sc], frame_multiplier*surface_thickness);
+    bar ([sc,sc,0], [0,sc,sc], frame_multiplier*surface_thickness);
+    segre_surface();
+}
+
 module simplex_segre_flat(){
     // lay the simplex flat and very mildly truncate it
     difference () {
@@ -70,6 +80,31 @@ module simplex_segre_flat(){
 	cube ([4*sc,4*sc,surface_thickness], center=true);
     }
 }
+
+module segre_pure(){
+    // lay the simplex flat and very mildly truncate it
+    difference () {
+	translate ([0,0,1/3*frame_multiplier*surface_thickness])
+	rotate( v = [1,1,0], a = acos(1/sqrt(3))){
+	    segre_surface();
+	}
+	translate ([0,0,-1/2*surface_thickness])
+	cube ([4*sc,4*sc,surface_thickness], center=true);
+    }
+}
+
+module segre_framed () {
+    // lay the simplex flat and very mildly truncate it
+    difference () {
+	translate ([0,0,2/5*frame_multiplier*surface_thickness])
+	rotate( v = [1,1,0], a = acos(1/sqrt(3))){
+	    frame_segre();
+	}
+	translate ([0,0,-1/2*surface_thickness])
+	cube ([4*sc,4*sc,surface_thickness], center=true);
+    }
+}
+
 
 
 
